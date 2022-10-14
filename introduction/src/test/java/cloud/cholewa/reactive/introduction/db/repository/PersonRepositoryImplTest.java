@@ -2,6 +2,7 @@ package cloud.cholewa.reactive.introduction.db.repository;
 
 import cloud.cholewa.reactive.introduction.model.Person;
 import org.junit.jupiter.api.Test;
+import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
 class PersonRepositoryImplTest {
@@ -33,5 +34,56 @@ class PersonRepositoryImplTest {
                     return person;
                 }
         ).subscribe(person -> System.out.println(person.getFirstName()));
+    }
+
+    @Test
+    void findAllBlockFirst() {
+        Flux<Person> personFlux = personRepository.findAll();
+
+        Person person = personFlux.blockFirst();
+
+        System.out.println(person.toString());
+    }
+
+    @Test
+    void findAllBySubscribe() {
+        Flux<Person> personFlux = personRepository.findAll();
+
+        personFlux.subscribe(person -> System.out.println(person.toString()));
+    }
+
+    @Test
+    void findAllToListMono() {
+        Flux<Person> personFlux = personRepository.findAll();
+
+        personFlux.collectList().subscribe(people -> System.out.println(people.toString()));
+    }
+
+    @Test
+    void findPersonById() {
+        Flux<Person> personFlux = personRepository.findAll();
+
+        personFlux.filter(person -> person.getId().equals(2L)).subscribe(person -> System.out.println(person.toString()));
+    }
+
+    @Test
+    void findPersonByIdNotFound() {
+        Flux<Person> personFlux = personRepository.findAll();
+
+        Mono<Person> personMono = personFlux.filter(person -> person.getId().equals(8L)).next();
+
+        personMono.subscribe(person -> System.out.println(person.toString()));
+    }
+
+    @Test
+    void findPersonByIdNotFoundWithException() {
+        Flux<Person> personFlux = personRepository.findAll();
+
+        Mono<Person> personMono = personFlux.filter(person -> person.getId().equals(8L)).single();
+
+        personMono
+                .doOnError(throwable -> System.out.println("Boo"))
+                .onErrorReturn(Person.builder().build())
+                .subscribe(person -> System.out.println(person.toString()));
     }
 }
