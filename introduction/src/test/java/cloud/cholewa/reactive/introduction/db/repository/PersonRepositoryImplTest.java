@@ -4,6 +4,7 @@ import cloud.cholewa.reactive.introduction.model.Person;
 import org.junit.jupiter.api.Test;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
+import reactor.test.StepVerifier;
 
 class PersonRepositoryImplTest {
 
@@ -21,6 +22,22 @@ class PersonRepositoryImplTest {
     @Test
     void getPersonBySubscribe() {
         Mono<Person> personMono = personRepository.getById(1L);
+
+        StepVerifier.create(personMono)
+                .expectNextCount(1L)
+                .verifyComplete();
+
+        personMono.subscribe(person -> System.out.println(person.toString()));
+    }
+
+    @Test
+    void getPersonBySubscribeNotFound() {
+        Mono<Person> personMono = personRepository.getById(8L);
+
+        StepVerifier.create(personMono)
+                .expectNextCount(0)
+                .expectComplete()
+                .verify();
 
         personMono.subscribe(person -> System.out.println(person.toString()));
     }
@@ -48,6 +65,10 @@ class PersonRepositoryImplTest {
     @Test
     void findAllBySubscribe() {
         Flux<Person> personFlux = personRepository.findAll();
+
+        StepVerifier.create(personFlux)
+                        .expectNextCount(4)
+                                .verifyComplete();
 
         personFlux.subscribe(person -> System.out.println(person.toString()));
     }

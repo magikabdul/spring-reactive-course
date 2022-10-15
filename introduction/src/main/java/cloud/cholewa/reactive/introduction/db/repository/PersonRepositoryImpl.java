@@ -13,7 +13,7 @@ public class PersonRepositoryImpl implements PersonRepository {
 
     @Override
     public Mono<Person> getById(Long id) {
-        return Mono.just(kevin);
+        return id < 4L ? Mono.just(kevin) : Mono.empty();
     }
 
     @Override
