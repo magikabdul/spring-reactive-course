@@ -37,13 +37,13 @@ class BreweryController {
         return Mono.just(ResponseEntity.status(NOT_IMPLEMENTED).build());
     }
 
-    @PatchMapping
-    public Mono<ResponseEntity<BeerResponse>> updateBeer() {
+    @PatchMapping("{id}")
+    public Mono<ResponseEntity<BeerResponse>> updateBeer(@PathVariable String id) {
         return Mono.just(ResponseEntity.status(NOT_IMPLEMENTED).build());
     }
 
-    @DeleteMapping
-    public Mono<ResponseEntity<BeerResponse>> deleteBeer(String id) {
+    @DeleteMapping("{id}")
+    public Mono<ResponseEntity<BeerResponse>> deleteBeer(@PathVariable String id) {
         return Mono.just(ResponseEntity.status(NOT_IMPLEMENTED).build());
     }
 }
